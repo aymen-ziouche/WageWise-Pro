@@ -24,6 +24,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.black45,
       appBar: AppBar(
         title: const Text('Home Page', style: TextStyle(color: Colors.white)),
