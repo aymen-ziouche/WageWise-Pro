@@ -22,6 +22,41 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+                backgroundColor: Colors.black,
+                title: const Text(
+                  'Settings',
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+                content: TextField(
+                  style: const TextStyle(color: Colors.white),
+                  textInputAction: TextInputAction.done,
+                  keyboardType: TextInputType.number,
+                  onSubmitted: (value) {
+                    setState(() {
+                      money = int.parse(value);
+                    });
+                    Navigator.pop(context);
+                  },
+                  controller: myController,
+                  decoration: const InputDecoration(
+                    fillColor: Colors.white10,
+                    labelText: 'Enter yout hourly rate',
+                    labelStyle: TextStyle(color: Colors.white),
+                    hintText: "eg. 15\$/hr",
+                    hintStyle: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ));
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -162,11 +197,11 @@ class _HomePageState extends State<HomePage> {
               stream: _stopWatchTimer.rawTime,
               initialData: money,
               builder: (context, snapshot) {
-                var now = StopWatchTimer.getDisplayTimeHours(
+                var now = StopWatchTimer.getDisplayTimeMinute(
                     _stopWatchTimer.rawTime.value);
                 var nowint = int.parse(now);
 
-                return Text("You made : ${nowint * money}\$",
+                return Text("You made : ${nowint * money / 60}\$",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 25,

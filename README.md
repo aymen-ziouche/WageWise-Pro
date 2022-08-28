@@ -1,16 +1,7 @@
 # dollars_per_hour
 
-A new Flutter project.
+a fun little project to calculate the dollars per hour of a given amount of dollars and hours worked using a timer.
 
-## Getting Started
+## Preview
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<img src="https://user-images.githubusercontent.com/46304263/187073907-0af58173-d065-4060-9534-e433affba08b.png" width="45%"></img> <img src="https://user-images.githubusercontent.com/46304263/187073909-1b516b7f-f54e-4dff-ba24-b814e265b4ed.png" width="45%"></img>
