@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
@@ -11,6 +13,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final StopWatchTimer _stopWatchTimer = StopWatchTimer();
+
   final _isHours = true;
   int money = 5;
   final myController = TextEditingController();
@@ -25,35 +28,67 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-                backgroundColor: Colors.black,
-                title: const Text(
-                  'Settings',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                content: TextField(
-                  style: const TextStyle(color: Colors.white),
-                  textInputAction: TextInputAction.done,
-                  keyboardType: TextInputType.number,
-                  onSubmitted: (value) {
-                    setState(() {
-                      money = int.parse(value);
-                    });
-                    Navigator.pop(context);
-                  },
-                  controller: myController,
-                  decoration: const InputDecoration(
-                    fillColor: Colors.white10,
-                    labelText: 'Enter yout hourly rate',
-                    labelStyle: TextStyle(color: Colors.white),
-                    hintText: "eg. 15\$/hr",
-                    hintStyle: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ));
+      await dialog_widget();
     });
+  }
+
+  Future<dynamic> dialog_widget() {
+    return showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              backgroundColor: Colors.black,
+              title: const Text(
+                'Settings',
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              content: TextField(
+                style: const TextStyle(color: Colors.white),
+                textInputAction: TextInputAction.done,
+                keyboardType: TextInputType.number,
+                onSubmitted: (value) {
+                  setState(() {
+                    money = int.parse(value);
+                  });
+                  Navigator.pop(context);
+                },
+                controller: myController,
+                decoration: const InputDecoration(
+                  fillColor: Colors.white10,
+                  labelText: 'Enter yout hourly rate',
+                  labelStyle: TextStyle(color: Colors.white),
+                  hintText: "eg. 15\$/hr",
+                  hintStyle: TextStyle(color: Colors.white),
+                ),
+              ),
+            ));
+  }
+
+  Widget _indicatorWidget(displaytime, value) {
+    var minute = StopWatchTimer.getDisplayTimeMinute(value);
+    var minuteint = int.parse(minute);
+    // print(minuteint % 1);
+    double myNum = minuteint / 60;
+    double decimalPoint = myNum - myNum.toInt();
+    print(decimalPoint);
+
+    return CircularPercentIndicator(
+      radius: 100.0,
+      lineWidth: 10.0,
+      // percent: minuteint >= 60 ? 0.3 : minuteint / 60,
+      percent: decimalPoint,
+      center: Text(
+        displaytime,
+        style: const TextStyle(
+            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+      ),
+      progressColor: Colors.lightBlue,
+      backgroundColor: Colors.blueGrey,
+      animation: true,
+      animateFromLastPercent: true,
+      animationDuration: 1000,
+      circularStrokeCap: CircularStrokeCap.round,
+      restartAnimation: true,
+    );
   }
 
   @override
@@ -69,34 +104,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                        backgroundColor: Colors.black,
-                        title: const Text(
-                          'Settings',
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        ),
-                        content: TextField(
-                          style: const TextStyle(color: Colors.white),
-                          textInputAction: TextInputAction.done,
-                          keyboardType: TextInputType.number,
-                          onSubmitted: (value) {
-                            setState(() {
-                              money = int.parse(value);
-                            });
-                            Navigator.pop(context);
-                          },
-                          controller: myController,
-                          decoration: const InputDecoration(
-                            fillColor: Colors.white10,
-                            labelText: 'Enter yout hourly rate',
-                            labelStyle: TextStyle(color: Colors.white),
-                            hintText: "eg. 15\$/hr",
-                            hintStyle: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ));
+              dialog_widget();
             },
           ),
         ],
@@ -110,30 +118,11 @@ class _HomePageState extends State<HomePage> {
               initialData: _stopWatchTimer.rawTime.value,
               builder: (context, snapshot) {
                 final value = snapshot.data;
-                final displaytime =
-                    StopWatchTimer.getDisplayTime(value!, hours: _isHours);
-                var minute = StopWatchTimer.getDisplayTimeMinute(
-                    _stopWatchTimer.rawTime.value);
-                var minuteint = int.parse(minute);
-                return CircularPercentIndicator(
-                  radius: 100.0,
-                  lineWidth: 10.0,
-                  percent: minuteint / 60,
-                  center: Text(
-                    displaytime,
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  progressColor: Colors.lightBlue,
-                  backgroundColor: Colors.blueGrey,
-                  animation: true,
-                  animateFromLastPercent: true,
-                  animationDuration: 1000,
-                  circularStrokeCap: CircularStrokeCap.round,
-                  restartAnimation: true,
+                final displaytime = StopWatchTimer.getDisplayTime(
+                  value!,
+                  hours: _isHours,
                 );
+                return _indicatorWidget(displaytime, value);
               },
             ),
             const SizedBox(height: 100),
@@ -201,7 +190,8 @@ class _HomePageState extends State<HomePage> {
                     _stopWatchTimer.rawTime.value);
                 var nowint = int.parse(now);
 
-                return Text("You made : ${nowint * money / 60}\$",
+                return Text(
+                    "You made : ${(nowint * money / 60).toStringAsFixed(2)}\$",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 25,
